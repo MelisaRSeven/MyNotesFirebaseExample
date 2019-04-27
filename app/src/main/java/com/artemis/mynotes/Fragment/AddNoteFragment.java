@@ -14,11 +14,14 @@ import android.widget.Toast;
 
 import com.artemis.mynotes.Model.NoteModel;
 import com.artemis.mynotes.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class AddNoteFragment extends Fragment {
     DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("MyNote");
+    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
 
     EditText editNote;
     String noteId;
@@ -45,8 +48,10 @@ public class AddNoteFragment extends Fragment {
     private void addNoteDatabase(String note) {
         myNote = new NoteModel("Test", note, "--");
         noteId = mRef.push().getKey();
+
+        String mUid = mUser.getUid();
         if (noteId != null) {
-            mRef.child(noteId).child("note").setValue(myNote);
+            mRef.child("notes").child(mUid).child(noteId).setValue(myNote);
         }
 
         Toast.makeText(getContext(), "Note Added", Toast.LENGTH_SHORT).show();

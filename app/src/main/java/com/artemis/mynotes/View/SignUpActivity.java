@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.artemis.mynotes.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,6 +25,7 @@ import butterknife.OnClick;
 
 public class SignUpActivity extends AppCompatActivity {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser mUser;
     DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("MyNote");
 
     @BindView(R.id.signUp_name_edit)
@@ -43,11 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
     @BindView(R.id.signUp_RL)
     RelativeLayout signUpRL;
 
-    String nameId = signUpNameEdit.getText().toString();
-    String surnameId = signUpSurnameEdit.getText().toString().trim();
-    String emailId = signUpEmailEdit.getText().toString().trim();
-    String passwordId = signUpPasswordEdit.getText().toString().trim();
-    String passwordRepeatId = signUpPasswordRepeatEdit.getText().toString().trim();
+    String nameId, surnameId, emailId, passwordId, passwordRepeatId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +64,16 @@ public class SignUpActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.signUp_button:
+                nameId = signUpNameEdit.getText().toString();
+                surnameId = signUpSurnameEdit.getText().toString();
+                emailId = signUpEmailEdit.getText().toString().trim();
+                passwordId = signUpPasswordEdit.getText().toString().trim();
+                passwordRepeatId = signUpPasswordRepeatEdit.getText().toString().trim();
                 if(!nameId.isEmpty() && !surnameId.isEmpty() && !emailId.isEmpty() && !passwordId.isEmpty() && !passwordRepeatId.isEmpty()) {
                     if(passwordId.equals(passwordRepeatId)) {
-                        signUpOperation(emailId, passwordId);
+                        signUpOperation(emailId, passwordId, nameId, surnameId);
+                    }else {
+                        Toast.makeText(this, "Passwords does not match!", Toast.LENGTH_SHORT).show();
                     }
                 }else {
                     Toast.makeText(this, "Field can't be empty", Toast.LENGTH_SHORT).show();
@@ -80,11 +85,12 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    private void signUpOperation(String email, String password) {
+    private void signUpOperation(String email, String password, String name, String surname) {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()) {
+                mUser = FirebaseAuth.getInstance().getCurrentUser();
                 startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-                addProfileDatabase(nameId, surnameId, emailId);
+                addProfileDatabase(name, surname, email);
                 Toast.makeText(SignUpActivity.this, "Signed up successfully! ", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(this, e -> {
@@ -97,13 +103,11 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void addProfileDatabase(String name, String surname, String email) {
-        String userId = mRef.push().getKey();
+        String userId = mUser.getUid();
 
-        if(userId !=null) {
-            mRef.child(userId).child("1").setValue(name);
-            mRef.child(userId).child("2").setValue(surname);
-            mRef.child(userId).child("3").setValue(email);
-        }
+        mRef.child("user").child(userId).child("1").setValue(name);
+        mRef.child("user").child(userId).child("2").setValue(surname);
+        mRef.child("user").child(userId).child("3").setValue(email);
     }
 
     private void closeKeyboard(View view) {
