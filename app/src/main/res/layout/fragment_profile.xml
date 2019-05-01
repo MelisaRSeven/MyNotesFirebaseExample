@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.ProfileFragment"
+    android:padding="30dp"
+    android:background="@drawable/my_notes_edit">
+
+    <ImageView
+        android:id="@+id/profile_picture"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        />
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:hint="@string/name"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/colorBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/profile_picture"
+        android:layout_marginTop="10dp"
+        />
+
+    <TextView
+        android:id="@+id/profile_email"
+        android:hint="@string/email"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:textColor="@color/colorBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/profile_name"
+        android:layout_marginTop="5dp"
+        />
+
+</RelativeLayout>

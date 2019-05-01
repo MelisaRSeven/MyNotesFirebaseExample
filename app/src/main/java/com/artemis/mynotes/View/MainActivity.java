@@ -1,27 +1,24 @@
 package com.artemis.mynotes.View;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.artemis.mynotes.Fragment.AddNoteFragment;
 import com.artemis.mynotes.Fragment.NotesFragment;
+import com.artemis.mynotes.Fragment.ProfileFragment;
+import com.artemis.mynotes.Fragment.RecipeAddFragment;
+import com.artemis.mynotes.Fragment.RecipeShowFragment;
 import com.artemis.mynotes.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -66,9 +63,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_notes) {
             selectedFragment = new NotesFragment();
+
         }else if (id == R.id.nav_add_notes) {
             selectedFragment = new AddNoteFragment();
+
         }else if (id == R.id.nav_profile) {
+            selectedFragment = new ProfileFragment();
+
+        }else if (id == R.id.nav_add_recipe) {
+            selectedFragment = new RecipeAddFragment();
+
+        }else if (id == R.id.nav_show_recipe) {
+            selectedFragment = new RecipeShowFragment();
 
         }else if (id == R.id.nav_log_out) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -84,21 +90,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .show();
 
         }else if (id == R.id.nav_settings) {
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-
-            Uri uri = Uri.fromParts("package", getPackageName(), null);
-            intent.setData(uri);
-
-            startActivity(intent);
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         }
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (selectedFragment != null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_content, selectedFragment);
+            transaction.commit();
         }
-        transaction.commit();
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

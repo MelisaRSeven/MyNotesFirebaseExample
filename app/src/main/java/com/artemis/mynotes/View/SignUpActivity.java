@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.artemis.mynotes.Model.UserModel;
 import com.artemis.mynotes.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -105,9 +106,8 @@ public class SignUpActivity extends AppCompatActivity {
     private void addProfileDatabase(String name, String surname, String email) {
         String userId = mUser.getUid();
 
-        mRef.child("user").child(userId).child("1").setValue(name);
-        mRef.child("user").child(userId).child("2").setValue(surname);
-        mRef.child("user").child(userId).child("3").setValue(email);
+        UserModel userModel = new UserModel(name, surname, email);
+        mRef.child("user").child(userId).setValue(userModel);
     }
 
     private void closeKeyboard(View view) {

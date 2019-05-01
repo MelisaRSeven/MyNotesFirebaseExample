@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.artemis.mynotes.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +28,8 @@ public class NotesFragment extends Fragment {
 
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     DatabaseReference dbRef = mDatabase.getReference("MyNote");
+
+    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
 
     ListView listView;
     ArrayAdapter<String> arrayNotesAdapter;
@@ -48,7 +52,6 @@ public class NotesFragment extends Fragment {
         });
 
         ArrayList<String> noteList = getMyNotes();
-
         arrayNotesAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_1, android.R.id.text1, noteList);
 
         listView.setAdapter(arrayNotesAdapter);
@@ -64,11 +67,13 @@ public class NotesFragment extends Fragment {
     private ArrayList<String> getMyNotes() {
         myNote = new ArrayList<>();
 
+        String mUid = mUser.getUid();
+
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds: dataSnapshot.getChildren()) {
-                    note = Objects.requireNonNull(ds.child("note").getValue()).toString();
+                    note = Objects.requireNonNull(ds.child("notes").child(mUid).getValue()).toString();
                     myNote.add(note);
                 }
                 arrayNotesAdapter.notifyDataSetChanged();
